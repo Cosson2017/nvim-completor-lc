@@ -13,10 +13,11 @@ endfunc
 
 func! lsp_lc#complete(ctx)
 	"\ 'character': LSP#character(),
+	" vim -> lsp zero-based
     let l:params = {
                 \ 'filename': LSP#filename(),
                 \ 'line': LSP#line(),
-                \ 'character': a:ctx.col - 2,
+                \ 'character': a:ctx.col - 1, 
                 \ 'handle': v:true,
                 \ }
 
