@@ -7,11 +7,6 @@
 "       Desc: 
 """"""""""""""""""""""""""""""""""""""""""
 
-let g:load_nvim_completor_languageclient_neovim = get(g:, "load_nvim_completor_languageclient_neovim", 0)
-if g:load_nvim_completor_languageclient_neovim == 0
-	finish
-endif
-
 if exists("s:is_load")
 	call nvim_log#log_info("lsp-lc complete is load")
 	finish

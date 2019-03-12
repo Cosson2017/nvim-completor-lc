@@ -17,8 +17,9 @@ func! lsp_lc#complete(ctx)
     let l:params = {
                 \ 'filename': LSP#filename(),
                 \ 'line': LSP#line(),
-                \ 'character': a:ctx.col - 1, 
-                \ 'handle': v:true,
+				\ 'character': LSP#character(),
+				\ 'complete_position': v:null,
+                \ 'handle': v:false,
                 \ }
 
 	"call nvim_log#log_debug(string(a:ctx))
