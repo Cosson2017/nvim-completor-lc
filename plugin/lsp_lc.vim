@@ -21,8 +21,6 @@ func! lsp_lc#complete(ctx)
 		call timer_stop(s:cur_timer)
 		let s:cur_timer = 0
 	endif
-	"let l:callback = function('s:fire_complete', [a:ctx])
-	"let l:Callback = function('s:fire_complete', [a:ctx])
 	func! Callback(time_id) closure
 		if a:time_id != s:cur_timer
 			return
@@ -34,8 +32,8 @@ func! lsp_lc#complete(ctx)
 endfunc
 
 func! s:fire_complete(ctx)
-	"\ 'character': LSP#character(),
-	" vim -> lsp zero-based
+	"ctx.{line, col} 提供的是当前光标的前的字母位置, 并且是1-based
+	"lsp 补全位置是当前光标的位置，并且是0-based
     let l:params = {
                 \ 'filename': LSP#filename(),
 				\ 'position': {
@@ -44,10 +42,6 @@ func! s:fire_complete(ctx)
 				\ },
 			\ }
 
-	"echo string( LSP#character() ) . " " . string(a:ctx.col)
-
-	"call nvim_log#log_debug(string(a:ctx))
-    "call extend(l:params, a:0 >= 1 ? a:1 : {})
     let l:Callback = function('s:complete_callback', [a:ctx])
     return LanguageClient#Call('textDocument/completion', l:params, l:Callback)
 	"return LanguageClient#textDocument_completion({}, l:Callback)
