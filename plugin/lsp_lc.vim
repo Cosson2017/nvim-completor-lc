@@ -16,6 +16,21 @@ let s:is_load = 1
 let s:cur_timer = 0
 let s:fire_complete_interval = 30
 
+let s:fire_count = 0
+
+func! s:count_fire(ctx)
+	if s:fire_count > 100000000
+		let s:fire_count = 1
+	else
+		let s:fire_count = s:fire_count + 1
+	endif
+	let a:ctx['fire_count'] = s:fire_count
+endfunc
+
+func! s:check_fire_count(ctx)
+	return a:ctx['fire_count'] == s:fire_count
+endfunc
+
 func! lsp_lc#complete(ctx)
 	if s:cur_timer != 0
 		call timer_stop(s:cur_timer)
@@ -42,12 +57,18 @@ func! s:fire_complete(ctx)
 				\ },
 			\ }
 
+	call s:count_fire(a:ctx)
     let l:Callback = function('s:complete_callback', [a:ctx])
-    return LanguageClient#Call('textDocument/completion', l:params, l:Callback)
+	return LanguageClient#Call('textDocument/completion', l:params, l:Callback)
 	"return LanguageClient#textDocument_completion({}, l:Callback)
 endfunc
 
 func! s:complete_callback(ctx, ret_data)
+	if ! s:check_fire_count(a:ctx)
+		"echo "lsp lc complete late"
+		return
+	endif
+
 	call nvim_log#log_debug(string(a:ret_data))
 	call luaeval("require('complete-engine/lsp-lc').complete_callback(_A.ctx, _A.data)", {
 				\ "ctx": a:ctx,
