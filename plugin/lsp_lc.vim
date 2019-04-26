@@ -14,7 +14,7 @@ end
 let s:is_load = 1
 
 let s:cur_timer = 0
-let s:fire_complete_interval = 30
+let s:fire_complete_interval = 10
 
 let s:fire_count = 0
 
@@ -32,6 +32,8 @@ func! s:check_fire_count(ctx)
 endfunc
 
 func! lsp_lc#complete(ctx)
+	call LanguageClient#handleTextChanged()
+
 	if s:cur_timer != 0
 		call timer_stop(s:cur_timer)
 		let s:cur_timer = 0
@@ -60,7 +62,6 @@ func! s:fire_complete(ctx)
 	call s:count_fire(a:ctx)
     let l:Callback = function('s:complete_callback', [a:ctx])
 	return LanguageClient#Call('textDocument/completion', l:params, l:Callback)
-	"return LanguageClient#textDocument_completion({}, l:Callback)
 endfunc
 
 func! s:complete_callback(ctx, ret_data)
